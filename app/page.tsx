@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import {ArrowRight,Check,Clock3,CreditCard,Heart,MapPin,Menu,MessageCircle,Minus,PackageCheck,Plus,RotateCcw,Search,ShieldCheck,ShoppingBag,Sparkles,Truck,UserRound,Workflow,X} from "lucide-react";
-const ps=[{n:"Fechadura Smart One",c:"Fechaduras digitais",p:1299.9,o:1499.9,pos:"62%",tag:"Mais vendido"},{n:"Videoporteiro Vision",c:"Segurança conectada",p:749.9,o:899.9,pos:"80%",tag:"Novo"},{n:"Hub Casa Connect",c:"Automação residencial",p:399.9,o:469.9,pos:"93%",tag:"15% OFF"}];
+const ps=[{n:"Papaiz Smart Lock SL100",c:"ASSA ABLOY · Papaiz",p:1299.9,o:1499.9,pos:"62%",tag:"Mais vendido"},{n:"Papaiz Smart Lock SL120",c:"ASSA ABLOY · Papaiz",p:1149.9,o:1299.9,pos:"80%",tag:"Novo"},{n:"Yale YMI 70A",c:"ASSA ABLOY · Yale",p:1899.9,o:2199.9,pos:"93%",tag:"Destaque"}];
 const ss=[["Carrinho abandonado","Evento recebido do e-commerce",ShoppingBag],["Aguardar 15 minutos","Janela inteligente de conversão",Clock3],["Enviar WhatsApp","Mensagem personalizada com o carrinho",MessageCircle],["Cliente respondeu","Intenção identificada pela IA",Sparkles],["Cupom aplicado","Checkout recuperado: CASA10",Check]] as const;
 const deliverySteps=[["Venda concluída","Pedido #CS-2048 criado",ShoppingBag],["Pagamento aprovado","Notificação enviada por WhatsApp",CreditCard],["Pedido em separação","Cliente atualizado automaticamente",PackageCheck],["Pedido despachado","Código de rastreio enviado",Truck],["Pedido a caminho","Previsão de entrega: hoje, 18h",MapPin]] as const;
 const brl=(v:number)=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
