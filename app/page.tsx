@@ -63,6 +63,7 @@ const translations = {
     demoSubtitle: "Jornadas de compra e pós-venda",
     abandoned: "Carrinho abandonado",
     trackOrder: "Acompanhar pedido",
+    restartDemo: "Reiniciar demo",
     navProducts: "Produtos",
     navSolutions: "Soluções",
     navOffers: "Ofertas",
@@ -105,7 +106,7 @@ const translations = {
     customerInformed: "Cliente informado em cada etapa do pedido",
     orderRecovered: "Pedido recuperado com sucesso",
     conversionAttributed: "Conversão atribuída ao Voll Workflows",
-    executeAgain: "Executar novamente",
+    executeAgain: "Fechar",
     startSimulation: "Iniciar simulação",
     executing: "Executando automação...",
     paidMessageTitle: "Pagamento aprovado ✅",
@@ -120,8 +121,6 @@ const translations = {
     waitDesc: "Janela inteligente de conversão",
     abandonEvent: "Disparar carrinho abandonado",
     abandonEventDesc: "Evento enviado ao Voll Workflows",
-    sendWhatsApp: "Enviar WhatsApp",
-    sendWhatsAppDesc: "Mensagem com link e cupom de 10%",
     couponLink: "Link com cupom aplicado",
     couponUrl:
       "https://voll-commerce-workflows.voll-solutio-3673.chatgpt.site/checkout?cupom=CASA10",
@@ -139,6 +138,7 @@ const translations = {
     demoSubtitle: "Purchase and post-sale journeys",
     abandoned: "Abandoned cart",
     trackOrder: "Track order",
+    restartDemo: "Restart demo",
     navProducts: "Products",
     navSolutions: "Solutions",
     navOffers: "Offers",
@@ -181,7 +181,7 @@ const translations = {
     customerInformed: "Customer informed at every order stage",
     orderRecovered: "Order recovered successfully",
     conversionAttributed: "Conversion attributed to Voll Workflows",
-    executeAgain: "Run again",
+    executeAgain: "Close",
     startSimulation: "Start simulation",
     executing: "Running automation...",
     paidMessageTitle: "Payment approved ✅",
@@ -195,8 +195,6 @@ const translations = {
     waitDesc: "Smart conversion window",
     abandonEvent: "Trigger abandoned cart",
     abandonEventDesc: "Event sent to Voll Workflows",
-    sendWhatsApp: "Send WhatsApp",
-    sendWhatsAppDesc: "Message with a 10% coupon link",
     couponLink: "Coupon link applied",
     couponUrl:
       "https://voll-commerce-workflows.voll-solutio-3673.chatgpt.site/checkout?coupon=CASA10",
@@ -214,6 +212,7 @@ const translations = {
     demoSubtitle: "Recorridos de compra y posventa",
     abandoned: "Carrito abandonado",
     trackOrder: "Seguir pedido",
+    restartDemo: "Reiniciar demo",
     navProducts: "Productos",
     navSolutions: "Soluciones",
     navOffers: "Ofertas",
@@ -256,7 +255,7 @@ const translations = {
     customerInformed: "Cliente informado en cada etapa del pedido",
     orderRecovered: "Pedido recuperado con éxito",
     conversionAttributed: "Conversión atribuida a Voll Workflows",
-    executeAgain: "Ejecutar de nuevo",
+    executeAgain: "Cerrar",
     startSimulation: "Iniciar simulación",
     executing: "Ejecutando automatización...",
     paidMessageTitle: "Pago aprobado ✅",
@@ -270,8 +269,6 @@ const translations = {
     waitDesc: "Ventana inteligente de conversión",
     abandonEvent: "Activar carrito abandonado",
     abandonEventDesc: "Evento enviado a Voll Workflows",
-    sendWhatsApp: "Enviar WhatsApp",
-    sendWhatsAppDesc: "Mensaje con enlace y cupón del 10%",
     couponLink: "Enlace con cupón aplicado",
     couponUrl:
       "https://voll-commerce-workflows.voll-solutio-3673.chatgpt.site/checkout?coupon=CASA10",
@@ -286,17 +283,17 @@ const translations = {
 } as const;
 const customerInfo = {
   pt: {
-    name: "Ana Martins",
+    name: "Ricardo Martins",
     address: "Av. Paulista, 1000 · São Paulo - SP",
     phoneLabel: "Telefone",
   },
   en: {
-    name: "Ana Martins",
+    name: "Ricardo Martins",
     address: "1000 Paulista Avenue · São Paulo, Brazil",
     phoneLabel: "Phone",
   },
   es: {
-    name: "Ana Martins",
+    name: "Ricardo Martins",
     address: "Av. Paulista, 1000 · São Paulo, Brasil",
     phoneLabel: "Teléfono",
   },
@@ -306,7 +303,6 @@ const makeRecoverySteps = (t: Copy) =>
   [
     [t.wait, t.waitDesc, Clock3],
     [t.abandonEvent, t.abandonEventDesc, ShoppingBag],
-    [t.sendWhatsApp, t.sendWhatsAppDesc, MessageCircle],
     [t.couponLink, t.couponUrl, Check],
   ] as const;
 const makeDeliverySteps = (t: Copy) =>
@@ -333,7 +329,7 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
     [sending, setSending] = useState<WorkflowEvent | null>(null),
     [apiError, setApiError] = useState(""),
     [customerPhone, setCustomerPhone] = useState("5511989785888");
-  const maxStep = scenario === "delivery" ? 2 : 3;
+  const maxStep = 2;
   const advance = () =>
     setStep((v) => {
       const n = Math.min(maxStep, v + 1);
@@ -347,6 +343,18 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
     setStep(-1);
     setRun(true);
     setApiError("");
+  };
+  const resetDemo = () => {
+    setCart(false);
+    setFlow(false);
+    setRun(false);
+    setStep(-1);
+    setScenario("recovery");
+    setSelected(0);
+    setQty(1);
+    setSending(null);
+    setApiError("");
+    setCustomerPhone("5511989785888");
   };
   useEffect(() => {
     const context = (
@@ -455,6 +463,9 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
           <button onClick={() => start("recovery")}>{t.abandoned}</button>
           <button onClick={() => start("delivery")}>
             {t.trackOrder} <ArrowRight />
+          </button>
+          <button className="restart" onClick={resetDemo}>
+            <RotateCcw /> {t.restartDemo}
           </button>
         </section>
       </div>
@@ -732,14 +743,18 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
             </div>
           </div>
         )}
-        <button className="run" disabled={run} onClick={() => start()}>
+        <button
+          className="run"
+          disabled={run}
+          onClick={() => (done ? setFlow(false) : start())}
+        >
           {run ? (
             <>
               <i /> {t.executing}
             </>
           ) : (
             <>
-              <RotateCcw /> {done ? t.executeAgain : t.startSimulation}
+              {done ? <X /> : <RotateCcw />} {done ? t.executeAgain : t.startSimulation}
             </>
           )}
         </button>

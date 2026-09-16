@@ -57,6 +57,10 @@ svg {
   border-radius: 7px;
   padding: 6px 10px;
 }
+.demo .restart {
+  background: #ef0057;
+  border-color: #ef0057;
+}
 header {
   height: 78px;
   background: #fff;
