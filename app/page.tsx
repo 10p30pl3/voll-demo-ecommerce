@@ -464,22 +464,6 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
   };
   return (
     <main>
-      <div className="demo">
-        <div>
-          <Workflow />
-          <b>{t.demoTitle}</b>
-          <span>{t.demoSubtitle}</span>
-        </div>
-        <section>
-          <button onClick={() => start("recovery")}>{t.abandoned}</button>
-          <button onClick={() => start("delivery")}>
-            {t.trackOrder} <ArrowRight />
-          </button>
-          <button className="restart" onClick={resetDemo}>
-            <RotateCcw /> {t.restartDemo}
-          </button>
-        </section>
-      </div>
       <header>
         <a className="brand" href={locale === "pt" ? "/" : `/${locale}`}>
           <img
@@ -506,6 +490,9 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
             ES
           </a>
         </div>
+        <button className="restart" onClick={resetDemo}>
+          <RotateCcw /> {t.restartDemo}
+        </button>
         <div className="tools">
           <button className="ico">
             <Search />

@@ -57,9 +57,16 @@ svg {
   border-radius: 7px;
   padding: 6px 10px;
 }
-.demo .restart {
+.restart {
   background: #ef0057;
   border-color: #ef0057;
+  color: #fff;
+  border-radius: 7px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
 }
 header {
   height: 78px;
