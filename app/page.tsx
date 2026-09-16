@@ -109,6 +109,7 @@ const translations = {
     executeAgain: "Fechar",
     startSimulation: "Iniciar simulação",
     executing: "Executando automação...",
+    processing: "Processando...",
     paidMessageTitle: "Pagamento aprovado ✅",
     paidMessage:
       "Recebemos seu pagamento. Já estamos preparando o pedido #CS-2048.",
@@ -184,6 +185,7 @@ const translations = {
     executeAgain: "Close",
     startSimulation: "Start simulation",
     executing: "Running automation...",
+    processing: "Processing...",
     paidMessageTitle: "Payment approved ✅",
     paidMessage: "We received your payment. We are preparing order #CS-2048.",
     routeMessageTitle: "Your order is on the way 🚚",
@@ -258,6 +260,7 @@ const translations = {
     executeAgain: "Cerrar",
     startSimulation: "Iniciar simulación",
     executing: "Ejecutando automatización...",
+    processing: "Procesando...",
     paidMessageTitle: "Pago aprobado ✅",
     paidMessage: "Recibimos tu pago. Ya estamos preparando el pedido #CS-2048.",
     routeMessageTitle: "Tu pedido está en camino 🚚",
@@ -328,7 +331,8 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
     [scenario, setScenario] = useState<"recovery" | "delivery">("recovery"),
     [sending, setSending] = useState<WorkflowEvent | null>(null),
     [apiError, setApiError] = useState(""),
-    [customerPhone, setCustomerPhone] = useState("5511989785888");
+    [customerPhone, setCustomerPhone] = useState("5511989785888"),
+    [processingStep, setProcessingStep] = useState<number | null>(null);
   const maxStep = 2;
   const advance = () =>
     setStep((v) => {
@@ -353,6 +357,7 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
     setSelected(0);
     setQty(1);
     setSending(null);
+    setProcessingStep(null);
     setApiError("");
     setCustomerPhone("5511989785888");
   };
@@ -446,10 +451,16 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
     }
   };
   const handleStepClick = async (index: number) => {
-    if (index !== step + 1 || sending) return;
+    if (index !== step + 1 || sending || processingStep !== null) return;
+    setProcessingStep(index);
     const event = eventForStep(scenario, index);
-    if (event && !(await triggerEvent(event))) return;
+    if (event && !(await triggerEvent(event))) {
+      setProcessingStep(null);
+      return;
+    }
+    if (!event) await new Promise((resolve) => setTimeout(resolve, 650));
     advance();
+    setProcessingStep(null);
   };
   return (
     <main>
@@ -658,7 +669,9 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
         </div>
         <div className={`status ${run ? "running" : done ? "done" : ""}`}>
           <i />
-          {run
+          {processingStep !== null
+            ? t.processing
+            : run
             ? t.running
             : done
               ? scenario === "delivery"
@@ -709,20 +722,25 @@ export function CommercePage({ locale = "pt" }: { locale?: Locale }) {
           </div>
         )}
         <div className="timeline">
-          {currentSteps.map(([t, d, Icon], i) => (
+          {currentSteps.map(([title, d, Icon], i) => (
             <button
               type="button"
               className={`event ${i <= step ? "complete" : ""} ${run && i === step ? "active" : ""}`}
-              key={t}
+              key={title}
               onClick={() => handleStepClick(i)}
-              disabled={sending !== null || (i !== step + 1 && i > step)}
+              disabled={
+                processingStep !== null ||
+                sending !== null ||
+                (i !== step + 1 && i > step)
+              }
             >
               <i>{i < step ? <Check /> : <Icon />}</i>
               <div>
-                <b>{t}</b>
+                <b>{processingStep === i ? t.processing : title}</b>
                 <span>{d}</span>
               </div>
-              {sending && eventForStep(scenario, i) === sending ? (
+              {processingStep === i ||
+              (sending && eventForStep(scenario, i) === sending) ? (
                 <mark />
               ) : (
                 run && i === step && <mark />
